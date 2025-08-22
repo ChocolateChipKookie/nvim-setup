@@ -198,11 +198,28 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
--- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
--- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
--- vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
--- vim.keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
--- vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
+-- Yank full path
+vim.keymap.set('n', '<leader>yff', function()
+  local path = vim.fn.expand '%:p'
+  if vim.loop.fs_stat(path) then
+    vim.fn.setreg('+', path)
+    vim.notify('Yanked full path: ' .. path)
+  else
+    vim.notify('Buffer is not a file!', vim.log.levels.WARN)
+  end
+end, { desc = '[Y]ank [F]ile [F]ull path' })
+
+-- Yank file name only
+vim.keymap.set('n', '<leader>yfn', function()
+  local path = vim.fn.expand '%:p'
+  if vim.loop.fs_stat(path) then
+    local file_name = vim.fn.expand '%:t'
+    vim.fn.setreg('+', file_name)
+    vim.notify('Yanked file name: ' .. file_name)
+  else
+    vim.notify('Buffer is not a file!', vim.log.levels.WARN)
+  end
+end, { desc = '[Y]ank [F]ile [N]ame' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -599,6 +616,15 @@ require('lazy').setup({
           --  Useful when you're not sure what type a variable is and you want to see
           --  the definition of its *type*, not where it was *defined*.
           map('grt', require('telescope.builtin').lsp_type_definitions, '[G]oto [T]ype Definition')
+
+          map('ga', function()
+            vim.cmd 'LspClangdSwitchSourceHeader'
+          end, '[G]oto [A]nalog header/source')
+
+          map('gA', function()
+            vim.cmd 'vsplit'
+            vim.cmd 'LspClangdSwitchSourceHeader'
+          end, '[G]oto [A]nalog header/source')
 
           -- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
           ---@param client vim.lsp.Client
@@ -1017,6 +1043,7 @@ require('lazy').setup({
   -- Or use telescope!
   -- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
   -- you can continue same window with `<space>sr` which resumes last telescope search
+  { 'tpope/vim-eunuch' },
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
