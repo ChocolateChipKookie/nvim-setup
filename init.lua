@@ -221,6 +221,29 @@ vim.keymap.set('n', '<leader>yfn', function()
   end
 end, { desc = '[Y]ank [F]ile [N]ame' })
 
+-- Colorscheme
+-- You can easily change to a different colorscheme.
+-- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
+-- change the command in the config to whatever the name of that colorscheme is.
+vim.cmd.colorscheme 'slate'
+
+-- Here is a quick keymap for cycling through different colorschemes
+local colorschemes = vim.fn.getcompletion('', 'color')
+
+vim.keymap.set('n', '<leader>tn', function()
+  local idx = vim.fn.index(colorschemes, vim.g.colors_name)
+  local next_color = (idx + 1 >= #colorschemes) and colorschemes[1] or colorschemes[idx + 2]
+  vim.cmd { cmd = 'colorscheme', args = { next_color } }
+  vim.notify('New color scheme: ' .. next_color, vim.log.levels.WARN)
+end, { desc = 'Next colorscheme' })
+
+vim.keymap.set('n', '<leader>tp', function()
+  local idx = vim.fn.index(colorschemes, vim.g.colors_name)
+  local prev_color = (idx <= 0) and colorschemes[#colorschemes] or colorschemes[idx]
+  vim.cmd { cmd = 'colorscheme', args = { prev_color } }
+  vim.notify('New color scheme: ' .. prev_color, vim.log.levels.WARN)
+end, { desc = 'Previous colorscheme' })
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -953,7 +976,7 @@ require('lazy').setup({
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
+      -- vim.cmd.colorscheme 'tokyonight-night'
     end,
   },
 
