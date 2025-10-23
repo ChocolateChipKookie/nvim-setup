@@ -244,6 +244,9 @@ vim.keymap.set('n', '<leader>tp', function()
   vim.notify('New color scheme: ' .. prev_color, vim.log.levels.WARN)
 end, { desc = 'Previous colorscheme' })
 
+-- Default view for netrw file explorer
+vim.g.netrw_liststyle = 3
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -336,6 +339,9 @@ require('lazy').setup({
         topdelete = { text = '‾' },
         changedelete = { text = '~' },
       },
+    },
+    keys = {
+      { '<leader>gb', '<cmd>Gitsigns blame<cr>', desc = '[G]it [B]lame' },
     },
   },
 
@@ -1073,6 +1079,31 @@ require('lazy').setup({
   -- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
   -- you can continue same window with `<space>sr` which resumes last telescope search
   { 'tpope/vim-eunuch' },
+  {
+    'stevearc/oil.nvim',
+    opts = {},
+    -- Optional dependencies
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function()
+      require('oil').setup {
+        -- Oil will take over directory buffers (e.g. `vim .` or `:e src/`)
+        default_file_explorer = true,
+        columns = {
+          'icon',
+          'size',
+          -- "permissions",
+          -- "mtime",
+        },
+        view_options = {
+          -- Show files and directories that start with "."
+          show_hidden = true,
+        },
+      }
+
+      -- Key mappings
+      vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
+    end,
+  },
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
