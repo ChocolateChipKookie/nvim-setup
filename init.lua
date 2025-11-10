@@ -781,6 +781,12 @@ require('lazy').setup({
             },
           },
         },
+        zls = {
+          -- Further information about build-on save:
+          -- https://zigtools.org/zls/guides/build-on-save/
+          enable_build_on_save = true,
+          semantic_tokens = 'partial',
+        },
       }
 
       -- Ensure the servers and tools above are installed
